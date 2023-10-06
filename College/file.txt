@@ -1,0 +1,7 @@
+zombie orphan combine - 3,4 -> 3
+4 - fcfs 
+5 - sjf and non premptive priority
+
+objective 
+programmin code 
+output 
