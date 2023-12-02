@@ -1,90 +1,87 @@
-// Banker's Algorithm
 #include <stdio.h>
 
-int main()
-{
-    // Number of processes and resources
-    int n = 5, m = 3;
+int main() {
+    // Get input for the number of processes and resources
+    int n, m;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
 
-    // Allocation matrix
-    int alloc[5][3] = {
-        {0, 1, 0},  // P0
-        {2, 0, 0},  // P1
-        {3, 0, 2},  // P2
-        {2, 1, 1},  // P3
-        {0, 0, 2}}; // P4
+    printf("Enter the number of resources: ");
+    scanf("%d", &m);
 
-    // Maximum claim matrix
-    int max[5][3] = {
-        {7, 5, 3},  // P0
-        {3, 2, 2},  // P1
-        {9, 0, 2},  // P2
-        {2, 2, 2},  // P3
-        {4, 3, 3}}; // P4
+    // Allocate memory for the matrices
+    int alloc[n][m], max[n][m], avail[m], fin[n], ans[n];
 
-    // Available resources vector
-    int avail[3] = {3, 3, 2};
+    // Get input for the allocation matrix
+    printf("\nEnter the allocation matrix:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &alloc[i][j]);
+        }
+    }
 
-    // Finish array
-    int fin[5];
-    for (int i = 0; i < n; i++)
-        fin[i] = 0;
+    // Get input for the maximum claim matrix
+    printf("\nEnter the maximum claim matrix:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &max[i][j]);
+        }
+    }
 
-    // Need matrix calculation
+    // Get input for the available resources vector
+    printf("\nEnter the available resources vector:\n");
+    for (int i = 0; i < m; i++) {
+        scanf("%d", &avail[i]);
+    }
+
+    // Calculate the need matrix
     int need[n][m];
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < m; j++)
-        {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
             need[i][j] = max[i][j] - alloc[i][j];
         }
     }
 
-    // Safe sequence array
-    int ans[n], ind = 0;
-    for (int k = 0; k < n; k++)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            if (fin[i] == 0)
-            {
+    // Initialize the finish array
+    for (int i = 0; i < n; i++) {
+        fin[i] = 0;
+    }
+
+    // Find a safe sequence using the Banker's algorithm
+    int safe = 1, ind = 0;
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            if (fin[i] == 0) {
                 int f = 0;
-                for (int j = 0; j < m; j++)
-                {
-                    if (need[i][j] > avail[j])
-                    {
+                for (int j = 0; j < m; j++) {
+                    if (need[i][j] > avail[j]) {
                         f = 1;
                         break;
                     }
                 }
 
-                if (f == 0)
-                {
+                if (f == 0) {
                     ans[ind++] = i;
-                    for (int y = 0; y < m; y++)
+                    for (int y = 0; y < m; y++) {
                         avail[y] += alloc[i][y];
+                    }
                     fin[i] = 1;
                 }
             }
         }
     }
 
-    // Checking if a safe sequence exists
-    int safe = 1;
-    for (int i = 0; i < n; i++)
-    {
-        if (ans[i] != 1)
-        {
-            safe = 0;
-            printf("No safe sequence exists\n");
-            break;
-        }
+    // Check if a safe sequence exists
+    if (!safe) {
+        printf("No safe sequence exists.\n");
+        return 0;
     }
 
-    // Printing the safe sequence
+    // Print the safe sequence
     printf("Safe sequence: ");
-    for (int i = 0; i < n - 1; i++)
+    for (int i = 0; i < n - 1; i++) {
         printf("P%d -> ", ans[i]);
+    }
     printf("P%d\n", ans[n - 1]);
 
     return 0;
